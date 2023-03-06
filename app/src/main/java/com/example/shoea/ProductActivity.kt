@@ -7,6 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.denzcoskun.imageslider.ImageSlider
+import com.denzcoskun.imageslider.models.SlideModel
+
 class ProductActivity : AppCompatActivity() {
 
     private var quantity:Int = 1
@@ -19,16 +22,23 @@ class ProductActivity : AppCompatActivity() {
 
         // creating variable for views
         val titleTV: TextView = findViewById(R.id.idTitleText)
-        val imageIV: ImageView = findViewById(R.id.idTitleImage)
+        val imageIV: ImageSlider = findViewById(R.id.idTitleImage)
         val descTV: TextView = findViewById(R.id.idDesc)
         val quantityTV: TextView = findViewById(R.id.idtotalQuantity)
         val priceTV: TextView = findViewById(R.id.idProductPrice)
         val plusBtn: Button = findViewById(R.id.idPlusBtn)
         val minusBtn: Button = findViewById(R.id.idMinusBtn)
 
+        // Image Slider
+        val images = ArrayList<SlideModel>()
+        val listOfImages = item.images
+        for (url in listOfImages)
+            images.add(SlideModel(url, item.title))
+        imageIV.setImageList(images)
+
         // initializing required views
         titleTV.text = item.title
-        Glide.with(applicationContext).load(item.thumbnail).into(imageIV)
+//        Glide.with(applicationContext).load(item.thumbnail).into(imageIV)
         descTV.text = item.description
         quantityTV.text = quantity.toString()
         priceTV.text = "$"+item.price.toString()+".00"

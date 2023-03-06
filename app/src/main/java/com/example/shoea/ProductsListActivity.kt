@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -18,6 +20,8 @@ import java.io.Serializable
 class ProductsListActivity : AppCompatActivity(), productItemClicked{
 
     private val PERMISSION_CODE = 102
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var progressBar: ProgressBar
     private val productList: ArrayList<Product> = ArrayList()
     private lateinit var productsListAdapter: ProductsListAdapter
 
@@ -35,8 +39,11 @@ class ProductsListActivity : AppCompatActivity(), productItemClicked{
         // getting data from api
         getProducts()
 
+
+        progressBar = findViewById(R.id.idListProgressBar)
+
         // creating recyclerView
-        val recyclerView: RecyclerView = findViewById(R.id.idProductsListRV)
+        recyclerView = findViewById(R.id.idProductsListRV)
         recyclerView.layoutManager = LinearLayoutManager(this)
         productsListAdapter = ProductsListAdapter(this)
         recyclerView.adapter = productsListAdapter
@@ -49,6 +56,8 @@ class ProductsListActivity : AppCompatActivity(), productItemClicked{
         products.enqueue(object: Callback<MODAL>{
             override fun onResponse(call: Call<MODAL>, response: Response<MODAL>) {
                 val responseBody = response.body()!!
+                progressBar.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
                 val list: List<Product> = responseBody.products
                 for(res in list) {
                     val product: Product = Product(
@@ -71,6 +80,8 @@ class ProductsListActivity : AppCompatActivity(), productItemClicked{
             }
 
             override fun onFailure(call: Call<MODAL>, t: Throwable) {
+                recyclerView.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
                 Toast.makeText(this@ProductsListActivity, "Sever is not working, try after sometime.", Toast.LENGTH_LONG).show()
             }
         })
